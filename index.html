@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi - SAMAFITRO X HONEYWELL INDONESIA PARTNER EXCELLENCE SUMMIT 2026</title>
+    <title>Registrasi - SAMAFITRO X BRADY IPS PARTNER EXCELLENT SUMMIT 2026</title>
+    
+    <!-- Load face-api.js dari CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -56,16 +60,16 @@
             object-fit: contain;
         }
 
-        /* KHUSUS LOGO HONEYWELL (DIPERBESAR EKSTRA) */
+        /* LOGO HONEYWELL (UKURAN BESAR) */
         .logo-row-top img.logo-honeywell {
-            max-height: 160px; /* Diperbesar signifikan sesuai permintaan */
+            max-height: 95px;
             width: auto;
             object-fit: contain;
         }
 
         /* Pemisah/Divider Halus antar Logo Atas */
         .logo-divider {
-            height: 60px; /* Disesuaikan tinggi garis pemisah */
+            height: 60px;
             width: 1.5px;
             background-color: #ddd;
         }
@@ -79,12 +83,11 @@
         }
 
         .logo-row-bottom img.logo-aidc {
-            max-height: 170px;
+            max-height: 110px;
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
         }
-        /* ------------------------------------------- */
 
         .header {
             text-align: center;
@@ -174,55 +177,61 @@
             color: #777;
             margin-top: 15px;
         }
+
+        /* Indicator Status Model AI */
+        .ai-status {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         
-        <!-- LOGO LAYOUT BERBERTINGKAT -->
+        <!-- LOGO LAYOUT -->
         <div class="logo-wrapper">
-            <!-- Baris Atas: Samafitro & Honeywell (Besar) -->
             <div class="logo-row-top">
-                <img src="images/samafitro.png" alt="Logo Samafitro">
+                <img src="samafitro.png" alt="Logo Samafitro">
                 <div class="logo-divider"></div>
-                <img src="images/honeywell.png" alt="Logo Honeywell" class="logo-honeywell">
+                <img src="honeywell.png" alt="Logo Honeywell" class="logo-honeywell">
             </div>
 
-            <!-- Baris Bawah: Logo AIDC Utama -->
             <div class="logo-row-bottom">
-                <img src="images/aidc.png" alt="Logo AIDC" class="logo-aidc">
+                <img src="aidc.png" alt="Logo AIDC" class="logo-aidc">
             </div>
         </div>
 
         <div class="header">
-            <h1>SAMAFITRO X HONEYWELL INDONESIA</h1>
-            <h2>PARTNER EXCELLENCE SUMMIT 2026</h2>
+            <h1>SAMAFITRO X BRADY IPS</h1>
+            <h2>PARTNER EXCELLENT SUMMIT 2026</h2>
         </div>
 
         <form id="registrationForm">
             
-            <!-- Nama Lengkap -->
+            <!-- FULL NAME -->
             <div class="form-group">
-                <label for="nama">Nama Lengkap <span>*</span></label>
+                <label for="nama">FULL NAME <span>*</span></label>
                 <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap Anda" required>
             </div>
 
             <!-- Perusahaan -->
             <div class="form-group">
-                <label for="perusahaan">Nama Perusahaan <span>*</span></label>
+                <label for="perusahaan">COMPANY NAME <span>*</span></label>
                 <input type="text" id="perusahaan" name="perusahaan" placeholder="Masukkan nama perusahaan" required>
             </div>
 
             <!-- Jabatan -->
             <div class="form-group">
-                <label for="jabatan">Jabatan <span>*</span></label>
+                <label for="jabatan">POSITION <span>*</span></label>
                 <input type="text" id="jabatan" name="jabatan" placeholder="Masukkan jabatan Anda" required>
             </div>
 
             <!-- Size Kemeja -->
             <div class="form-group">
-                <label for="size_kemeja">Size Kemeja <span>*</span></label>
+                <label for="size_kemeja">SHIRT SIZE <span>*</span></label>
                 <select id="size_kemeja" name="size_kemeja" required>
                     <option value="" disabled selected>-- Pilih Ukuran Kemeja --</option>
                     <option value="S">S</option>
@@ -236,7 +245,7 @@
 
             <!-- Size Celana -->
             <div class="form-group">
-                <label for="size_celana">Size Celana <span>*</span></label>
+                <label for="size_celana">PANTS SIZE <span>*</span></label>
                 <select id="size_celana" name="size_celana" required>
                     <option value="" disabled selected>-- Pilih Ukuran Celana --</option>
                     <option value="28">28</option>
@@ -258,11 +267,12 @@
             <div class="form-group">
                 <label for="foto_selfie">Upload Foto Selfie <span>*</span></label>
                 <input type="file" id="foto_selfie" accept="image/*" capture="user" required>
-                <div class="file-hint">Format: JPG, PNG, JPEG. Foto akan terkompres otomatis saat diunggah.</div>
+                <div class="file-hint">Format: JPG, PNG, JPEG. Pastikan wajah Anda terlihat jelas.</div>
+                <div class="ai-status" id="aiStatus">Memuat sistem verifikasi wajah...</div>
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" id="submitBtn" class="btn-submit">DAFTAR SEKARANG</button>
+            <button type="submit" id="submitBtn" class="btn-submit" disabled>MEMUAT SISTEM...</button>
 
         </form>
 
@@ -270,10 +280,52 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "GANTI_DENGAN_WEB_APP_EXEC_URL_ANDA";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEPkoEaYehB9Yuy34a0DDslSC3ORxibfkRasGVgAuAI0GCXFbpPtuWT64hc4_2zuMBhA/exec";
 
         const form = document.getElementById('registrationForm');
         const submitBtn = document.getElementById('submitBtn');
+        const aiStatus = document.getElementById('aiStatus');
+        let isModelLoaded = false;
+
+        // Load Model Face Detection (Tiny Face Detector ringan untuk mobile & desktop)
+        async function loadFaceModel() {
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                isModelLoaded = true;
+                aiStatus.innerText = "Sistem deteksi wajah siap.";
+                aiStatus.style.color = "green";
+                submitBtn.disabled = false;
+                submitBtn.innerText = "DAFTAR SEKARANG";
+            } catch (err) {
+                console.error("Gagal memuat model deteksi wajah:", err);
+                aiStatus.innerText = "Peringatan: Verifikasi wajah offline. Pendaftaran tetap dapat berlanjut.";
+                aiStatus.style.color = "#d9232d";
+                submitBtn.disabled = false;
+                submitBtn.innerText = "DAFTAR SEKARANG";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadFaceModel);
+
+        // Fungsi Memeriksa Keberadaan Wajah pada Foto
+        async function checkFaceInImage(file) {
+            if (!isModelLoaded) return true; // Bypass jika model gagal dimuat
+
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = async () => {
+                    const detections = await faceapi.detectAllFaces(
+                        img, 
+                        new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.4 })
+                    );
+                    URL.revokeObjectURL(img.src);
+                    resolve(detections.length > 0);
+                };
+                img.onerror = () => resolve(false);
+            });
+        }
 
         function compressImage(file, maxWidth, maxHeight, quality) {
             return new Promise((resolve, reject) => {
@@ -311,7 +363,7 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            if (SCRIPT_URL === "GANTI_DENGAN_WEB_APP_EXEC_URL_ANDA" || !SCRIPT_URL.includes("/exec")) {
+            if (SCRIPT_URL === "https://script.google.com/macros/s/AKfycbyEPkoEaYehB9Yuy34a0DDslSC3ORxibfkRasGVgAuAI0GCXFbpPtuWT64hc4_2zuMBhA/exec" || !SCRIPT_URL.includes("/exec")) {
                 alert("Harap masukkan Web App Exec URL Google Apps Script yang benar di dalam variabel SCRIPT_URL.");
                 return;
             }
@@ -325,11 +377,25 @@
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerText = "Mengompres & Mengirim Data...";
+            submitBtn.innerText = "Memeriksa Foto...";
 
             try {
+                // Step 1: Deteksi Wajah
+                const hasFace = await checkFaceInImage(file);
+
+                if (!hasFace) {
+                    alert("Please Take Your Best Selfie");
+                    fileInput.value = ""; // Reset file input
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "DAFTAR SEKARANG";
+                    return;
+                }
+
+                // Step 2: Kompresi Gambar
+                submitBtn.innerText = "Mengompres & Mengirim Data...";
                 const fotoBase64 = await compressImage(file, 1000, 1000, 0.7);
 
+                // Step 3: Payload Data
                 const payload = {
                     nama: document.getElementById('nama').value,
                     perusahaan: document.getElementById('perusahaan').value,
